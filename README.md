@@ -6,13 +6,13 @@ Aplikasi Android modern untuk menjelajahi katalog film resmi menggunakan TMDB AP
 
 ## 📸 Tampilan Antarmuka (Screenshots)
 
-| Desain Konsep & Mockup | Home & Carousel Slider | Detail Movie & Trailer |
+| Home Screen | Favorite List Screen | Account Screen |
 | :---: | :---: | :---: |
-| <img src="docs/screenshots/ui_concept_design.jpg" width="260" alt="Concept Design"/> | <img src="docs/screenshots/home_carousel.png" width="260" alt="Home Carousel"/> | <img src="docs/screenshots/movie_detail.jpg" width="260" alt="Movie Detail"/> |
+| <img src="docs/screenshots/home_screen.png" width="260" alt="Home Screen"/> | <img src="docs/screenshots/favorite_list_screen.png" width="260" alt="Favorite List"/> | <img src="docs/screenshots/account_screen.png" width="260" alt="Account Screen"/> |
 
 | Pemutar Trailer Resmi (In-App) | Ulasan Pengguna (Expand/Collapse & Rating) |
 | :---: | :---: |
-| <img src="docs/screenshots/movie_trailer.jpg" width="260" alt="In-App YouTube Trailer"/> | <img src="docs/screenshots/movie_reviews.png" width="260" alt="User Reviews Expand Collapse"/> |
+| <img src="docs/screenshots/detail_movie_screen.png" width="260" alt="Detail Movie"/> | <img src="docs/screenshots/review_rating_view.png" width="260" alt="User Reviews Expand Collapse"/> |
 
 ---
 
