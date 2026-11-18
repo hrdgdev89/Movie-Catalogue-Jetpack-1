@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/genreListFragment">
+
+    <fragment
+        android:id="@+id/genreListFragment"
+        android:name="com.jetpack.moviecataloguejetpack.presentation.genre.GenreListFragment"
+        android:label="Movie Genres"
+        tools:layout="@layout/fragment_genre_list">
+        <action
+            android:id="@+id/action_genreListFragment_to_movieListByGenreFragment"
+            app:destination="@id/movieListByGenreFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+        <action
+            android:id="@+id/action_genreListFragment_to_favoriteListFragment"
+            app:destination="@id/favoriteListFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/movieListByGenreFragment"
+        android:name="com.jetpack.moviecataloguejetpack.presentation.movielist.MovieListByGenreFragment"
+        android:label="Discover Movies"
+        tools:layout="@layout/fragment_movie_list_by_genre">
+        <argument
+            android:name="genreId"
+            android:defaultValue="0"
+            app:argType="integer" />
+        <argument
+            android:name="genreName"
+            android:defaultValue=""
+            app:argType="string" />
+        <action
+            android:id="@+id/action_movieListByGenreFragment_to_movieDetailFragment"
+            app:destination="@id/movieDetailFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/movieDetailFragment"
+        android:name="com.jetpack.moviecataloguejetpack.presentation.detail.MovieDetailFragment"
+        android:label="Detail Film"
+        tools:layout="@layout/fragment_movie_detail">
+        <argument
+            android:name="movieId"
+            android:defaultValue="0"
+            app:argType="integer" />
+        <argument
+            android:name="movieTitle"
+            android:defaultValue=""
+            app:argType="string" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/favoriteListFragment"
+        android:name="com.jetpack.moviecataloguejetpack.presentation.favorite.FavoriteListFragment"
+        android:label="Film Favorit"
+        tools:layout="@layout/fragment_favorite_list">
+        <action
+            android:id="@+id/action_favoriteListFragment_to_favoriteDetailFragment"
+            app:destination="@id/favoriteDetailFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/favoriteDetailFragment"
+        android:name="com.jetpack.moviecataloguejetpack.presentation.favorite.FavoriteDetailFragment"
+        android:label="Detail Film Favorit"
+        tools:layout="@layout/fragment_movie_detail">
+        <argument
+            android:name="movieId"
+            android:defaultValue="0"
+            app:argType="integer" />
+        <argument
+            android:name="movieTitle"
+            android:defaultValue=""
+            app:argType="string" />
+    </fragment>
+
+</navigation>

@@ -1,13 +1,13 @@
 <resources>
     <string name="app_name">Movie Catalogue</string>
-    <string name="title_detail_activity">Detail Catalogue</string>
-    <string name="title_movie">Movie</string>
-    <string name="title_tv">Tv Show</string>
-
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="title_vote">Vote Average: </string>
-    <string name="title_release_date">Release Date: </string>
-    <string name="title_overview">Overview: </string>
-    <string name="title_favorite">Favorite</string>
+    <string name="title_genres">Movie Genres</string>
+    <string name="title_discover_movies">Discover Movies</string>
+    <string name="title_movie_detail">Detail Film</string>
+    <string name="title_favorite_movies">Film Favorit</string>
+    <string name="title_vote">Rating: </string>
+    <string name="title_release_date">Tanggal Rilis: </string>
+    <string name="title_overview">Sinopsis: </string>
+    <string name="title_reviews">Ulasan Pengguna</string>
+    <string name="title_trailer">Trailer Resmi</string>
+    <string name="btn_retry">Coba Lagi</string>
 </resources>
