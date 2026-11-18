@@ -33,7 +33,8 @@ object DataMapper {
                 posterPath = response.posterPath,
                 backdropPath = response.backdropPath,
                 releaseDate = response.releaseDate,
-                voteAverage = response.voteAverage ?: 0.0
+                voteAverage = response.voteAverage ?: 0.0,
+                genreIds = response.genreIds ?: emptyList()
             )
         } ?: emptyList()
     }
@@ -76,7 +77,8 @@ object DataMapper {
                 key = key,
                 name = response.name.orEmpty(),
                 site = response.site.orEmpty(),
-                type = response.type.orEmpty()
+                type = response.type.orEmpty(),
+                official = response.official ?: false
             )
         } ?: emptyList()
     }

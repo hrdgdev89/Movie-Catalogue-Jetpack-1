@@ -1,10 +1,15 @@
 package com.jetpack.moviecataloguejetpack.presentation.detail
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.webkit.WebSettings
+import android.webkit.WebView
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
@@ -21,12 +26,13 @@ import com.jetpack.moviecataloguejetpack.presentation.common.LoadingStateAdapter
 import com.jetpack.moviecataloguejetpack.utils.Constants
 import com.jetpack.moviecataloguejetpack.utils.DateFormatter
 import com.jetpack.moviecataloguejetpack.utils.loadImage
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.PlayerConstants
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.AbstractYouTubePlayerListener
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.options.IFramePlayerOptions
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import java.util.Locale
 
 open class MovieDetailFragment : Fragment() {
 
@@ -41,7 +47,9 @@ open class MovieDetailFragment : Fragment() {
     private var currentMovieDetail: MovieDetail? = null
     private var isFavorite = false
     private var trailerVideoKey: String? = null
+    private var activeYouTubePlayer: YouTubePlayer? = null
     private var isPlayerInitialized = false
+    private var shouldPlayOnReady = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -62,7 +70,7 @@ open class MovieDetailFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         viewLifecycleOwner.lifecycle.addObserver(binding.youtubePlayerView)
 
-        setupToolbar()
+        setupButtons()
         setupReviewsRecyclerView()
         observeDetail()
         observeTrailers()
@@ -84,11 +92,151 @@ open class MovieDetailFragment : Fragment() {
                 Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
             }
         }
+
+        binding.btnWatchTrailer.setOnClickListener {
+            val key = trailerVideoKey
+            if (!key.isNullOrEmpty()) {
+                binding.contentScroll.post {
+                    val targetY = binding.tvTrailerHeading.top - 20
+                    binding.contentScroll.smoothScrollTo(0, if (targetY > 0) targetY else 0)
+                }
+                playTrailer(key)
+            } else {
+                Toast.makeText(requireContext(), "Trailer tidak tersedia untuk film ini", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        binding.layoutTrailerPreview.setOnClickListener {
+            val key = trailerVideoKey
+            if (!key.isNullOrEmpty()) {
+                playTrailer(key)
+            }
+        }
+
+        binding.btnOpenYoutube.setOnClickListener {
+            val key = trailerVideoKey
+            if (!key.isNullOrEmpty()) {
+                openInYouTube(key)
+            }
+        }
     }
 
-    private fun setupToolbar() {
-        binding.toolbar.title = if (movieTitle.isNotEmpty()) movieTitle else "Detail Film"
-        binding.toolbar.setNavigationOnClickListener {
+    private fun playTrailer(videoKey: String) {
+        binding.tvTrailerNotice.isVisible = false
+        val player = activeYouTubePlayer
+        if (player != null) {
+            binding.layoutTrailerPreview.isVisible = false
+            binding.pbTrailerLoading.isVisible = false
+            player.loadVideo(videoKey, 0f)
+        } else {
+            shouldPlayOnReady = true
+            binding.pbTrailerLoading.isVisible = true
+            if (!isPlayerInitialized) {
+                setupYouTubePlayer(videoKey)
+            }
+        }
+    }
+
+    private fun setupYouTubePlayer(videoKey: String) {
+        if (isPlayerInitialized) return
+        isPlayerInitialized = true
+
+        configureWebViewSettings(binding.youtubePlayerView)
+
+        val options = IFramePlayerOptions.Builder()
+            .controls(1)
+            .fullscreen(0)
+            .rel(0)
+            .ivLoadPolicy(3)
+            .ccLoadPolicy(0)
+            .origin("https://com.jetpack.moviecataloguejetpack")
+            .build()
+
+        binding.youtubePlayerView.initialize(
+            youTubePlayerListener = object : AbstractYouTubePlayerListener() {
+                override fun onReady(youTubePlayer: YouTubePlayer) {
+                    activeYouTubePlayer = youTubePlayer
+                    configureWebViewSettings(binding.youtubePlayerView)
+                    if (shouldPlayOnReady) {
+                        shouldPlayOnReady = false
+                        binding.layoutTrailerPreview.isVisible = false
+                        binding.pbTrailerLoading.isVisible = false
+                        youTubePlayer.loadVideo(videoKey, 0f)
+                    } else {
+                        youTubePlayer.cueVideo(videoKey, 0f)
+                    }
+                }
+
+                override fun onStateChange(youTubePlayer: YouTubePlayer, state: PlayerConstants.PlayerState) {
+                    when (state) {
+                        PlayerConstants.PlayerState.PLAYING -> {
+                            binding.layoutTrailerPreview.isVisible = false
+                            binding.pbTrailerLoading.isVisible = false
+                        }
+                        PlayerConstants.PlayerState.BUFFERING -> {
+                            binding.pbTrailerLoading.isVisible = true
+                        }
+                        PlayerConstants.PlayerState.PAUSED,
+                        PlayerConstants.PlayerState.ENDED -> {
+                            binding.pbTrailerLoading.isVisible = false
+                        }
+                        else -> Unit
+                    }
+                }
+
+                override fun onError(youTubePlayer: YouTubePlayer, error: PlayerConstants.PlayerError) {
+                    binding.pbTrailerLoading.isVisible = false
+                    binding.layoutTrailerPreview.isVisible = true
+                    val message = when (error) {
+                        PlayerConstants.PlayerError.VIDEO_NOT_PLAYABLE_IN_EMBEDDED_PLAYER ->
+                            "Pemutaran dibatasi di luar YouTube oleh pemilik video. Silakan tonton melalui aplikasi YouTube."
+                        else ->
+                            "Trailer tidak dapat diputar langsung di pemutar tertanam. Silakan gunakan tombol di bawah."
+                    }
+                    binding.tvTrailerNotice.text = message
+                    binding.tvTrailerNotice.isVisible = true
+                }
+            },
+            handleNetworkEvents = false,
+            playerOptions = options
+        )
+    }
+
+    private fun configureWebViewSettings(view: View) {
+        if (view is WebView) {
+            view.setLayerType(View.LAYER_TYPE_HARDWARE, null)
+            view.settings.apply {
+                javaScriptEnabled = true
+                domStorageEnabled = true
+                mediaPlaybackRequiresUserGesture = false
+                cacheMode = WebSettings.LOAD_DEFAULT
+                userAgentString = "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Mobile Safari/537.36"
+            }
+            return
+        }
+        if (view is ViewGroup) {
+            for (i in 0 until view.childCount) {
+                configureWebViewSettings(view.getChildAt(i))
+            }
+        }
+    }
+
+    private fun openInYouTube(videoKey: String) {
+        val appIntent = Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:$videoKey"))
+        val webIntent = Intent(Intent.ACTION_VIEW, Uri.parse("https://www.youtube.com/watch?v=$videoKey"))
+        try {
+            startActivity(appIntent)
+        } catch (e: Exception) {
+            try {
+                startActivity(webIntent)
+            } catch (ex: Exception) {
+                Toast.makeText(requireContext(), "Tidak dapat membuka YouTube", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    private fun setupButtons() {
+        binding.btnBack.setOnClickListener {
             findNavController().navigateUp()
         }
     }
@@ -142,18 +290,31 @@ open class MovieDetailFragment : Fragment() {
 
     private fun populateDetail(detail: MovieDetail) {
         currentMovieDetail = detail
-        binding.toolbar.title = detail.title
         binding.tvTitle.text = detail.title
         binding.tvTagline.text = detail.tagline.orEmpty()
         binding.tvTagline.isVisible = !detail.tagline.isNullOrEmpty()
-        binding.tvRating.text = String.format(Locale.getDefault(), "★ %.1f", detail.voteAverage)
-        binding.tvReleaseDate.text = DateFormatter.formatDate(detail.releaseDate)
-        binding.tvRuntime.text = DateFormatter.formatRuntime(detail.runtime)
-        binding.tvGenres.text = detail.genres.joinToString(", ") { it.name }
+
+        val year = if (!detail.releaseDate.isNullOrEmpty() && detail.releaseDate.length >= 4) {
+            detail.releaseDate.substring(0, 4)
+        } else {
+            "-"
+        }
+        val genresStr = if (detail.genres.isNotEmpty()) detail.genres.joinToString(", ") { it.name } else "Movie"
+        val runtimeStr = DateFormatter.formatRuntime(detail.runtime)
+        binding.tvMetaSubtitle.text = "$year | $genresStr | $runtimeStr"
+
+        val stars = (detail.voteAverage / 2.0).coerceIn(1.0, 5.0)
+        binding.star1.setImageResource(if (stars >= 1.0) R.drawable.baseline_star_24 else R.drawable.baseline_star_border_24)
+        binding.star2.setImageResource(if (stars >= 2.0) R.drawable.baseline_star_24 else R.drawable.baseline_star_border_24)
+        binding.star3.setImageResource(if (stars >= 3.0) R.drawable.baseline_star_24 else R.drawable.baseline_star_border_24)
+        binding.star4.setImageResource(if (stars >= 4.0) R.drawable.baseline_star_24 else R.drawable.baseline_star_border_24)
+        binding.star5.setImageResource(if (stars >= 4.7) R.drawable.baseline_star_24 else R.drawable.baseline_star_border_24)
+
         binding.tvOverview.text = detail.overview.ifEmpty { "Sinopsis belum tersedia." }
 
-        binding.ivBackdrop.loadImage(Constants.getBackdropUrl(detail.backdropPath))
-        binding.ivPoster.loadImage(Constants.getPosterUrl(detail.posterPath))
+        val backdropUrl = Constants.getBackdropUrl(detail.backdropPath)
+            ?: Constants.getPosterUrl(detail.posterPath)
+        binding.ivBackdrop.loadImage(backdropUrl)
     }
 
     private fun observeTrailers() {
@@ -165,35 +326,34 @@ open class MovieDetailFragment : Fragment() {
                             val firstTrailer = resource.data.firstOrNull()
                             if (firstTrailer != null) {
                                 trailerVideoKey = firstTrailer.key
-                                binding.youtubePlayerView.isVisible = true
+                                binding.cardYoutubePlayer.isVisible = true
+                                binding.tvTrailerHeading.isVisible = true
                                 binding.tvNoTrailer.isVisible = false
-                                initializeYouTubePlayer(firstTrailer.key)
+
+                                val thumbnailUrl = "https://img.youtube.com/vi/${firstTrailer.key}/hqdefault.jpg"
+                                binding.ivTrailerPoster.loadImage(thumbnailUrl)
+                                binding.layoutTrailerPreview.isVisible = true
+
+                                setupYouTubePlayer(firstTrailer.key)
                             } else {
-                                binding.youtubePlayerView.isVisible = false
+                                trailerVideoKey = null
+                                binding.cardYoutubePlayer.isVisible = false
+                                binding.tvTrailerHeading.isVisible = false
                                 binding.tvNoTrailer.isVisible = true
                             }
                         }
                         is Resource.Error -> {
-                            binding.youtubePlayerView.isVisible = false
+                            trailerVideoKey = null
+                            binding.cardYoutubePlayer.isVisible = false
+                            binding.tvTrailerHeading.isVisible = false
                             binding.tvNoTrailer.isVisible = true
                         }
                         is Resource.Loading -> {
-                            // Handled by main loading shimmer
+                            // Handled by main shimmer
                         }
                     }
                 }
             }
-        }
-    }
-
-    private fun initializeYouTubePlayer(videoKey: String) {
-        if (!isPlayerInitialized) {
-            isPlayerInitialized = true
-            binding.youtubePlayerView.addYouTubePlayerListener(object : AbstractYouTubePlayerListener() {
-                override fun onReady(youTubePlayer: YouTubePlayer) {
-                    youTubePlayer.cueVideo(videoKey, 0f)
-                }
-            })
         }
     }
 
@@ -223,10 +383,20 @@ open class MovieDetailFragment : Fragment() {
             if (isFav) R.drawable.ic_favorite_black_24dp
             else R.drawable.ic_favorite_border_black_24dp
         )
+        binding.btnFavorite.setColorFilter(
+            ContextCompat.getColor(
+                requireContext(),
+                if (isFav) R.color.colorPrimary else android.R.color.white
+            )
+        )
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
+        binding.youtubePlayerView.release()
+        activeYouTubePlayer = null
+        isPlayerInitialized = false
+        shouldPlayOnReady = false
         _binding = null
     }
 }

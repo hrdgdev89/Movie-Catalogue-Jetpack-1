@@ -15,4 +15,6 @@ interface IMovieRepository {
     fun getMovieDetail(movieId: Int): Flow<Resource<MovieDetail>>
     fun getMovieReviews(movieId: Int): Flow<PagingData<Review>>
     fun getMovieTrailers(movieId: Int): Flow<Resource<List<Video>>>
+    fun getTopRatedMovies(): Flow<Resource<List<Movie>>>
+    fun searchMovies(query: String): Flow<Resource<List<Movie>>>
 }

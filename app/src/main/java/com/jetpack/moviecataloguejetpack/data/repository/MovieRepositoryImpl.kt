@@ -71,14 +71,42 @@ class MovieRepositoryImpl(
         try {
             val response = apiService.getMovieVideos(movieId, Constants.API_KEY)
             val allVideos = DataMapper.mapVideoResponsesToDomain(response.results)
-            // Filter YouTube trailer videos
-            val trailers = allVideos.filter { video ->
-                video.site.equals("YouTube", ignoreCase = true) &&
-                        (video.type.equals("Trailer", ignoreCase = true) || video.type.equals("Teaser", ignoreCase = true))
-            }
+            // Filter YouTube trailer videos, prioritizing official Trailers first, then other Trailers, then Teasers
+            val trailers = allVideos
+                .filter { video ->
+                    video.site.equals("YouTube", ignoreCase = true) &&
+                            (video.type.equals("Trailer", ignoreCase = true) || video.type.equals("Teaser", ignoreCase = true))
+                }
+                .sortedWith(
+                    compareByDescending<Video> { it.type.equals("Trailer", ignoreCase = true) }
+                        .thenByDescending { it.official }
+                        .thenByDescending { it.type.equals("Teaser", ignoreCase = true) }
+                )
             emit(Resource.Success(trailers))
         } catch (e: Exception) {
             emit(Resource.Error(e.localizedMessage ?: "Terjadi kesalahan saat memuat trailer film", e))
+        }
+    }.flowOn(Dispatchers.IO)
+
+    override fun getTopRatedMovies(): Flow<Resource<List<Movie>>> = flow {
+        emit(Resource.Loading)
+        try {
+            val response = apiService.getTopRatedMovies(page = 1, apiKey = Constants.API_KEY)
+            val movies = DataMapper.mapMovieResponsesToDomain(response.results)
+            emit(Resource.Success(movies))
+        } catch (e: Exception) {
+            emit(Resource.Error(e.localizedMessage ?: "Terjadi kesalahan saat memuat film berating tinggi", e))
+        }
+    }.flowOn(Dispatchers.IO)
+
+    override fun searchMovies(query: String): Flow<Resource<List<Movie>>> = flow {
+        emit(Resource.Loading)
+        try {
+            val response = apiService.searchMovies(query = query, page = 1, apiKey = Constants.API_KEY)
+            val movies = DataMapper.mapMovieResponsesToDomain(response.results)
+            emit(Resource.Success(movies))
+        } catch (e: Exception) {
+            emit(Resource.Error(e.localizedMessage ?: "Terjadi kesalahan saat mencari film", e))
         }
     }.flowOn(Dispatchers.IO)
 }

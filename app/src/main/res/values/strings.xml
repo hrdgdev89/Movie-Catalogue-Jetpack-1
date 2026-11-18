@@ -1,13 +1,42 @@
 <resources>
     <string name="app_name">Movie Catalogue</string>
+    <string name="menu_home">Home</string>
+    <string name="menu_favorite">Favorite</string>
+    <string name="menu_account">Account</string>
+
     <string name="title_genres">Movie Genres</string>
     <string name="title_discover_movies">Discover Movies</string>
     <string name="title_movie_detail">Detail Film</string>
     <string name="title_favorite_movies">Film Favorit</string>
     <string name="title_vote">Rating: </string>
     <string name="title_release_date">Tanggal Rilis: </string>
-    <string name="title_overview">Sinopsis: </string>
+    <string name="title_overview">Sinopsis</string>
     <string name="title_reviews">Ulasan Pengguna</string>
     <string name="title_trailer">Trailer Resmi</string>
     <string name="btn_retry">Coba Lagi</string>
+
+    <!-- Home Screen -->
+    <string name="greeting_user">Hello, Eko</string>
+    <string name="subtitle_home">See Your Favorite Movie</string>
+    <string name="search_movie_hint">Search movie...</string>
+    <string name="suggested_for_you">Suggested for You</string>
+    <string name="watch_trailer">Watch Trailer</string>
+    <string name="story_line">Story Line</string>
+    <string name="no_movies_found">Tidak ada film yang ditemukan</string>
+
+    <!-- Favorite Screen -->
+    <string name="no_favorites">Belum ada film favorit</string>
+    <string name="no_favorites_desc">Tambahkan film ke favorit untuk melihatnya di sini</string>
+
+    <!-- Account Screen -->
+    <string name="title_account">Account</string>
+    <string name="account_name">Eko</string>
+    <string name="account_role">Movie Enthusiast</string>
+    <string name="settings_section_title">Pengaturan</string>
+    <string name="language_setting_title">Bahasa Aplikasi</string>
+    <string name="language_setting_desc">Pilih bahasa tampilan aplikasi</string>
+    <string name="choose_language">Pilih Bahasa</string>
+    <string name="lang_indonesian">Bahasa Indonesia</string>
+    <string name="lang_english">English</string>
+    <string name="lang_changed_toast">Bahasa berhasil diubah</string>
 </resources>

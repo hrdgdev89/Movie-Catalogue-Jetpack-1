@@ -36,15 +36,8 @@ class FavoriteListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setupToolbar()
         setupRecyclerView()
         observeFavorites()
-    }
-
-    private fun setupToolbar() {
-        binding.toolbar.setNavigationOnClickListener {
-            findNavController().navigateUp()
-        }
     }
 
     private fun setupRecyclerView() {
@@ -54,7 +47,7 @@ class FavoriteListFragment : Fragment() {
                 "movieTitle" to movie.title
             )
             findNavController().navigate(
-                R.id.action_favoriteListFragment_to_favoriteDetailFragment,
+                R.id.action_favoriteListFragment_to_movieDetailFragment,
                 bundle
             )
         }

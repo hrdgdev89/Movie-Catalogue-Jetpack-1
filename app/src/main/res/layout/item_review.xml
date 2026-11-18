@@ -2,13 +2,19 @@
 <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/card_review"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginHorizontal="16dp"
     android:layout_marginVertical="6dp"
+    android:clickable="true"
+    android:focusable="true"
+    android:foreground="?attr/selectableItemBackground"
     app:cardBackgroundColor="@color/card_background"
-    app:cardCornerRadius="12dp"
-    app:cardElevation="2dp">
+    app:cardCornerRadius="14dp"
+    app:cardElevation="2dp"
+    app:strokeColor="@color/border_card"
+    app:strokeWidth="1dp">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -16,18 +22,19 @@
         android:orientation="vertical"
         android:padding="14dp">
 
+        <!-- Header: Avatar, Author, Date, Rating -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
             android:orientation="horizontal">
 
+            <!-- Avatar Initial Circle -->
             <TextView
                 android:id="@+id/tv_author_initial"
-                android:layout_width="36dp"
-                android:layout_height="36dp"
-                android:background="@drawable/ic_launcher_background"
-                android:backgroundTint="@color/colorAccent"
+                android:layout_width="38dp"
+                android:layout_height="38dp"
+                android:background="@drawable/bg_avatar_circle"
                 android:gravity="center"
                 android:textColor="@android:color/white"
                 android:textSize="16sp"
@@ -38,6 +45,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="12dp"
+                android:layout_marginEnd="8dp"
                 android:layout_weight="1"
                 android:orientation="vertical">
 
@@ -45,47 +53,149 @@
                     android:id="@+id/tv_author"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
+                    android:ellipsize="end"
+                    android:maxLines="1"
                     android:textColor="@color/text_color_light"
+                    android:textSize="15sp"
                     android:textStyle="bold"
-                    tools:text="John Doe" />
+                    tools:text="AlphaLucifer" />
 
                 <TextView
                     android:id="@+id/tv_date"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/text_color_light"
-                    android:textSize="11sp"
-                    tools:text="18 Nov 2026" />
+                    android:layout_marginTop="2dp"
+                    android:textColor="@color/text_color_secondary"
+                    android:textSize="12sp"
+                    tools:text="17 Jul 2026" />
 
             </LinearLayout>
 
-            <TextView
-                android:id="@+id/tv_rating"
+            <!-- Rating Container (Stars + Badge) -->
+            <LinearLayout
+                android:id="@+id/layout_rating"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@drawable/ic_launcher_background"
-                android:backgroundTint="@color/colorPrimary"
-                android:paddingHorizontal="8dp"
-                android:paddingVertical="4dp"
-                android:textColor="@color/colorAccent"
-                android:textSize="12sp"
-                android:textStyle="bold"
-                android:visibility="gone"
-                tools:text="★ 8.5"
-                tools:visibility="visible" />
+                android:gravity="end|center_vertical"
+                android:orientation="vertical"
+                tools:visibility="visible">
+
+                <!-- 5 Stars Row -->
+                <LinearLayout
+                    android:id="@+id/layout_author_stars"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:id="@+id/star_1"
+                        android:layout_width="14dp"
+                        android:layout_height="14dp"
+                        android:src="@drawable/baseline_star_24"
+                        app:tint="@color/colorGold"
+                        tools:ignore="ContentDescription" />
+
+                    <ImageView
+                        android:id="@+id/star_2"
+                        android:layout_width="14dp"
+                        android:layout_height="14dp"
+                        android:layout_marginStart="2dp"
+                        android:src="@drawable/baseline_star_24"
+                        app:tint="@color/colorGold"
+                        tools:ignore="ContentDescription" />
+
+                    <ImageView
+                        android:id="@+id/star_3"
+                        android:layout_width="14dp"
+                        android:layout_height="14dp"
+                        android:layout_marginStart="2dp"
+                        android:src="@drawable/baseline_star_24"
+                        app:tint="@color/colorGold"
+                        tools:ignore="ContentDescription" />
+
+                    <ImageView
+                        android:id="@+id/star_4"
+                        android:layout_width="14dp"
+                        android:layout_height="14dp"
+                        android:layout_marginStart="2dp"
+                        android:src="@drawable/baseline_star_24"
+                        app:tint="@color/colorGold"
+                        tools:ignore="ContentDescription" />
+
+                    <ImageView
+                        android:id="@+id/star_5"
+                        android:layout_width="14dp"
+                        android:layout_height="14dp"
+                        android:layout_marginStart="2dp"
+                        android:src="@drawable/baseline_star_24"
+                        app:tint="@color/colorGold"
+                        tools:ignore="ContentDescription" />
+
+                </LinearLayout>
+
+                <!-- Numeric Score Badge (e.g. 8.0/10) -->
+                <TextView
+                    android:id="@+id/tv_rating"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="3dp"
+                    android:background="@drawable/bg_rating_badge"
+                    android:paddingHorizontal="7dp"
+                    android:paddingVertical="2dp"
+                    android:textColor="@color/colorGold"
+                    android:textSize="11sp"
+                    android:textStyle="bold"
+                    tools:text="8.0 / 10" />
+
+            </LinearLayout>
 
         </LinearLayout>
 
+        <!-- Review Content (Collapsible / Expandable) -->
         <TextView
             android:id="@+id/tv_content"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="12dp"
+            android:ellipsize="end"
             android:lineSpacingExtra="3dp"
+            android:maxLines="3"
             android:textColor="@color/text_color_light"
             android:textSize="13sp"
-            tools:text="This is a wonderfully written review of the movie that elaborates on the cinematography and performance..." />
+            tools:text="The hype was massive, the crowd was packed, but the boredom in the theatre at the end credits said it all..." />
+
+        <!-- Expand / Collapse Action Button -->
+        <LinearLayout
+            android:id="@+id/btn_toggle_expand"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingVertical="4dp"
+            tools:visibility="visible">
+
+            <TextView
+                android:id="@+id/tv_toggle_expand"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Selengkapnya"
+                android:textColor="@color/colorPrimary"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+
+            <ImageView
+                android:id="@+id/iv_toggle_expand"
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:layout_marginStart="2dp"
+                android:rotation="90"
+                android:src="@drawable/ic_chevron_right_24dp"
+                app:tint="@color/colorPrimary"
+                tools:ignore="ContentDescription" />
+
+        </LinearLayout>
 
     </LinearLayout>
 

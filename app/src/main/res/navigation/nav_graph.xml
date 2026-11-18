@@ -3,7 +3,48 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/genreListFragment">
+    app:startDestination="@id/homeFragment">
+
+    <fragment
+        android:id="@+id/homeFragment"
+        android:name="com.jetpack.moviecataloguejetpack.presentation.home.HomeFragment"
+        android:label="Home"
+        tools:layout="@layout/fragment_home">
+        <action
+            android:id="@+id/action_homeFragment_to_movieDetailFragment"
+            app:destination="@id/movieDetailFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/favoriteListFragment"
+        android:name="com.jetpack.moviecataloguejetpack.presentation.favorite.FavoriteListFragment"
+        android:label="Film Favorit"
+        tools:layout="@layout/fragment_favorite_list">
+        <action
+            android:id="@+id/action_favoriteListFragment_to_movieDetailFragment"
+            app:destination="@id/movieDetailFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+        <action
+            android:id="@+id/action_favoriteListFragment_to_favoriteDetailFragment"
+            app:destination="@id/favoriteDetailFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/accountFragment"
+        android:name="com.jetpack.moviecataloguejetpack.presentation.account.AccountFragment"
+        android:label="Account"
+        tools:layout="@layout/fragment_account" />
 
     <fragment
         android:id="@+id/genreListFragment"
@@ -61,20 +102,6 @@
             android:name="movieTitle"
             android:defaultValue=""
             app:argType="string" />
-    </fragment>
-
-    <fragment
-        android:id="@+id/favoriteListFragment"
-        android:name="com.jetpack.moviecataloguejetpack.presentation.favorite.FavoriteListFragment"
-        android:label="Film Favorit"
-        tools:layout="@layout/fragment_favorite_list">
-        <action
-            android:id="@+id/action_favoriteListFragment_to_favoriteDetailFragment"
-            app:destination="@id/favoriteDetailFragment"
-            app:enterAnim="@anim/nav_default_enter_anim"
-            app:exitAnim="@anim/nav_default_exit_anim"
-            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
-            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
     </fragment>
 
     <fragment

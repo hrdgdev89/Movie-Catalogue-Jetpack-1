@@ -7,8 +7,10 @@ import com.jetpack.moviecataloguejetpack.domain.usecase.GetMovieGenresUseCase
 import com.jetpack.moviecataloguejetpack.domain.usecase.GetMovieReviewsUseCase
 import com.jetpack.moviecataloguejetpack.domain.usecase.GetMovieTrailersUseCase
 import com.jetpack.moviecataloguejetpack.domain.usecase.GetMoviesByGenreUseCase
+import com.jetpack.moviecataloguejetpack.domain.usecase.GetTopRatedMoviesUseCase
 import com.jetpack.moviecataloguejetpack.domain.usecase.IsFavoriteMovieUseCase
 import com.jetpack.moviecataloguejetpack.domain.usecase.RemoveFavoriteMovieUseCase
+import com.jetpack.moviecataloguejetpack.domain.usecase.SearchMoviesUseCase
 import org.koin.dsl.module
 
 val useCaseModule = module {
@@ -17,6 +19,8 @@ val useCaseModule = module {
     factory { GetMovieDetailUseCase(get()) }
     factory { GetMovieReviewsUseCase(get()) }
     factory { GetMovieTrailersUseCase(get()) }
+    factory { GetTopRatedMoviesUseCase(get()) }
+    factory { SearchMoviesUseCase(get()) }
     factory { GetFavoriteMoviesUseCase(get()) }
     factory { IsFavoriteMovieUseCase(get()) }
     factory { AddFavoriteMovieUseCase(get()) }

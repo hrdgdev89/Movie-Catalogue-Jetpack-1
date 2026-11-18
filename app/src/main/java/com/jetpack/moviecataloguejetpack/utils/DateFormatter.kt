@@ -28,4 +28,13 @@ object DateFormatter {
             "${remainingMinutes}m"
         }
     }
+
+    fun formatYear(dateString: String?): String {
+        if (dateString.isNullOrEmpty()) return ""
+        return if (dateString.length >= 4) {
+            "(${dateString.substring(0, 4)})"
+        } else {
+            ""
+        }
+    }
 }
